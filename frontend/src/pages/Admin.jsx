@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 
+// Admin dashboard page for staff to view and manage appointment requests
+// Loads appointment, customer, and worker data from backend
+// Allows staff to approve, decline, cancel, or complete appointments
 export default function Admin() {
+  // Stores backend data and UI state for admin dashboard
+  // Includes appointments, customers, workers, filters, and messages
   const [appointments, setAppointments] = useState([]);
   const [appointmentDetails, setAppointmentDetails] = useState({});
   const [customers, setCustomers] = useState([]);
@@ -8,10 +13,17 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
+
+  // Runs when the page loads to fetch all admin data
   useEffect(() => {
     fetchData();
   }, []);
 
+  // Fetches appointments, customers, workers, and appointment details from backend
+  // Also sorts appointments (pending first, then newest first)
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -54,6 +66,7 @@ export default function Admin() {
           }
 
           const detail = await res.json();
+
           return {
             appointment_id: appointment.appointment_id,
             detail,
@@ -75,6 +88,8 @@ export default function Admin() {
     }
   };
 
+  // Updates appointment status (approve, decline, cancel, complete)
+  // Sends PATCH request to backend and refreshes data
   const updateAppointmentStatus = async (appointmentId, action) => {
     try {
       setMessage("");
@@ -98,26 +113,26 @@ export default function Admin() {
         ? getCustomerEmail(appointment.customer_id)
         : null;
 
-        let newMessage = "";
+      let newMessage = "";
 
-        if (action === "approve" && customerEmail && customerEmail !== "—") {
-          newMessage = `Appointment approved successfully. Confirmation email sent to ${customerEmail}.`;
-        } else if (action === "decline") {
-          newMessage =
-            "Appointment declined. The requested time is unavailable. Please ask the customer to submit a new request or contact the salon to reschedule.";
-        } else if (action === "cancel") {
-          newMessage = "Appointment cancelled successfully.";
-        } else if (action === "complete") {
-          newMessage = "Appointment completed successfully.";
-        } else {
-          newMessage = "Appointment updated successfully.";
-        }
-        
-        setMessage(newMessage);
-        
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
+      if (action === "approve" && customerEmail && customerEmail !== "—") {
+        newMessage = `Appointment approved successfully. Confirmation email sent to ${customerEmail}.`;
+      } else if (action === "decline") {
+        newMessage =
+          "Appointment declined. The requested time is unavailable. Please ask the customer to submit a new request or contact the salon to reschedule.";
+      } else if (action === "cancel") {
+        newMessage = "Appointment cancelled successfully.";
+      } else if (action === "complete") {
+        newMessage = "Appointment completed successfully.";
+      } else {
+        newMessage = "Appointment updated successfully.";
+      }
+
+      setMessage(newMessage);
+
+      setTimeout(() => {
+        setMessage("");
+      }, 3000);
 
       fetchData();
     } catch (error) {
@@ -126,6 +141,7 @@ export default function Admin() {
     }
   };
 
+  // Helper functions to format date/time, customer, worker, and service info
   const formatDateTime = (dateTimeString) => {
     const date = new Date(dateTimeString);
     return date.toLocaleString();
@@ -172,6 +188,29 @@ export default function Admin() {
     }));
   };
 
+  // Filters appointments based on search term, status, and selected date
+  const filteredAppointments = appointments.filter((appointment) => {
+    const customerName = getCustomerName(appointment).toLowerCase();
+    const phone = getCustomerPhone(appointment.customer_id).toLowerCase();
+    const email = getCustomerEmail(appointment.customer_id).toLowerCase();
+    const search = searchTerm.toLowerCase();
+
+    const matchesSearch =
+      customerName.includes(search) ||
+      phone.includes(search) ||
+      email.includes(search) ||
+      String(appointment.appointment_id).includes(search);
+
+    const matchesStatus =
+      statusFilter === "all" || appointment.status === statusFilter;
+
+    const appointmentDate = appointment.appointment_datetime.split("T")[0];
+    const matchesDate = dateFilter === "" || appointmentDate === dateFilter;
+
+    return matchesSearch && matchesStatus && matchesDate;
+  });
+
+  // UI: renders admin dashboard table, filters, and action buttons
   return (
     <div style={styles.page}>
       <div style={styles.card}>
@@ -184,9 +223,51 @@ export default function Admin() {
           Refresh Appointments
         </button>
 
+        <div style={styles.filterBox}>
+          <input
+            type="text"
+            placeholder="Search by name, phone, email, or ID"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={styles.filterInput}
+          />
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={styles.filterInput}
+          >
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="declined">Declined</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="completed">Completed</option>
+          </select>
+
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            style={styles.filterInput}
+          />
+
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm("");
+              setStatusFilter("all");
+              setDateFilter("");
+            }}
+            style={styles.clearButton}
+          >
+            Clear Filters
+          </button>
+        </div>
+
         {loading ? (
           <p>Loading appointments...</p>
-        ) : appointments.length === 0 ? (
+        ) : filteredAppointments.length === 0 ? (
           <p>No appointments found.</p>
         ) : (
           <div style={styles.tableWrapper}>
@@ -204,9 +285,12 @@ export default function Admin() {
                   <th style={styles.th}>Actions</th>
                 </tr>
               </thead>
+
               <tbody>
-                {appointments.map((appointment) => {
-                  const serviceDetails = getServiceDetails(appointment.appointment_id);
+                {filteredAppointments.map((appointment) => {
+                  const serviceDetails = getServiceDetails(
+                    appointment.appointment_id
+                  );
 
                   return (
                     <tr key={appointment.appointment_id}>
@@ -311,6 +395,7 @@ export default function Admin() {
   );
 }
 
+// Returns color styling for each appointment status badge
 function getStatusStyle(status) {
   switch (status) {
     case "pending":
@@ -370,12 +455,6 @@ const styles = {
     color: "#666",
     marginBottom: "1.5rem",
   },
-  message: {
-    textAlign: "center",
-    marginBottom: "1rem",
-    fontWeight: "600",
-    color: "#7a4b2f",
-  },
   refreshButton: {
     padding: "0.6rem 1rem",
     border: "none",
@@ -385,6 +464,27 @@ const styles = {
     color: "#fff",
     fontWeight: "600",
     marginBottom: "1rem",
+  },
+  filterBox: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "0.75rem",
+    marginBottom: "1rem",
+  },
+  filterInput: {
+    padding: "0.6rem",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    fontSize: "0.95rem",
+  },
+  clearButton: {
+    padding: "0.6rem 1rem",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    backgroundColor: "#e2e3e5",
+    color: "#383d41",
+    fontWeight: "600",
   },
   toast: {
     position: "fixed",

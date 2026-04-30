@@ -1,3 +1,7 @@
+# Main FastAPI backend file for NailTech
+# Defines API routes for services, workers, bookings, appointments, and admin actions
+# Handles customer creation/reuse and appointment workflow (pending -> approved/declined/cancelled -> completed)
+
 from fastapi.middleware.cors import CORSMiddleware
 
 from decimal import Decimal
@@ -33,6 +37,7 @@ def root():
     return {"message": "NailTech backend is running"}
 
 
+# Returns all active services for the Services page and booking form
 @app.get("/services", response_model=list[ServiceOut])
 def get_services(db: Session = Depends(get_db)):
     return (
@@ -43,6 +48,7 @@ def get_services(db: Session = Depends(get_db)):
     )
 
 
+# Returns all active workers for the requested worker dropdown
 @app.get("/workers", response_model=list[WorkerOut])
 def get_workers(db: Session = Depends(get_db)):
     return (
@@ -53,16 +59,19 @@ def get_workers(db: Session = Depends(get_db)):
     )
 
 
+# Returns all customers stored in the database
 @app.get("/customers", response_model=list[CustomerOut])
 def get_customers(db: Session = Depends(get_db)):
     return db.query(Customer).order_by(Customer.first_name, Customer.last_name).all()
 
 
+# Return all appointments for the admin page
 @app.get("/appointments", response_model=list[AppointmentOut])
 def get_appointments(db: Session = Depends(get_db)):
     return db.query(Appointment).order_by(Appointment.appointment_datetime).all()
 
 
+# Returns detailed information for one appointment, including customer and selected services
 @app.get("/appointments/{appointment_id}", response_model=AppointmentDetailOut)
 def get_appointment_detail(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (
@@ -183,6 +192,9 @@ def create_appointment(payload: AppointmentCreate, db: Session = Depends(get_db)
     return new_appointment
 
 
+# Creates a customer booking request from the public booking form
+# Resuses an existing customer by email or phone, or creates a new customer
+# Creates a new appointment with "pending" status
 @app.post("/booking-request", response_model=AppointmentOut)
 def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(get_db)):
     if not payload.services:
@@ -279,6 +291,8 @@ def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(
 
     return new_appointment
 
+# Creates a booking directly from the admin side
+# Admin-created bookings are saved as "approved" instead of "pending"
 @app.post("/admin-booking", response_model=AppointmentOut)
 def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(get_db)):
     if not payload.services:
@@ -378,6 +392,7 @@ def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(ge
 
     return new_appointment
 
+# Updates an appointment status to approved
 @app.patch("/appointments/{appointment_id}/approve", response_model=AppointmentOut)
 def approve_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (
@@ -394,6 +409,7 @@ def approve_appointment(appointment_id: int, db: Session = Depends(get_db)):
     return appointment
 
 
+# Updates an appointment status to declined
 @app.patch("/appointments/{appointment_id}/decline", response_model=AppointmentOut)
 def decline_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (
@@ -410,6 +426,7 @@ def decline_appointment(appointment_id: int, db: Session = Depends(get_db)):
     return appointment
 
 
+# Updates an appointment status to cancelled
 @app.patch("/appointments/{appointment_id}/cancel", response_model=AppointmentOut)
 def cancel_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (
@@ -426,6 +443,7 @@ def cancel_appointment(appointment_id: int, db: Session = Depends(get_db)):
     return appointment
 
 
+# Marks an approved appointment as completed
 @app.patch("/appointments/{appointment_id}/complete", response_model=AppointmentOut)
 def complete_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (

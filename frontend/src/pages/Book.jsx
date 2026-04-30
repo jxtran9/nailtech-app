@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+// Booking page: allows users to create appointment requests
+// Handles form input, loads services/workers, and sends data to backend
 export default function Book() {
   const [services, setServices] = useState([]);
   const [workers, setWorkers] = useState([]);
@@ -8,6 +10,7 @@ export default function Book() {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // Stores all user input (name, contact, services, data/time)
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -58,6 +61,7 @@ export default function Book() {
     )
     .filter(Boolean);
 
+  // Calculates total price based on selected services
   const totalPrice = selectedServices.reduce((sum, service) => {
     return sum + Number(service.price);
   }, 0);
@@ -69,6 +73,7 @@ export default function Book() {
     .toISOString()
     .split("T")[0];
 
+  // Runs when page loads to fetch services and workers from backend
   useEffect(() => {
     fetchData();
   }, []);
@@ -80,6 +85,7 @@ export default function Book() {
     }, 3000);
   };
 
+  // Fetches services and workers from FastAPI backend
   const fetchData = async () => {
     try {
       const [servicesRes, workersRes] = await Promise.all([
@@ -104,6 +110,7 @@ export default function Book() {
     }
   };
 
+  // Updates formData when user types in inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -112,6 +119,7 @@ export default function Book() {
     }));
   };
 
+  // Updates selected service or worker for a specific service row
   const handleServiceChange = (index, field, value) => {
     const updatedServices = [...formData.services];
     updatedServices[index][field] = value;
@@ -122,6 +130,7 @@ export default function Book() {
     }));
   };
 
+  // Adds another service selection row
   const addServiceRow = () => {
     setFormData((prev) => ({
       ...prev,
@@ -135,6 +144,7 @@ export default function Book() {
     }));
   };
 
+  // Removes a service row
   const removeServiceRow = (index) => {
     if (formData.services.length === 1) return;
 
@@ -146,6 +156,7 @@ export default function Book() {
     }));
   };
 
+  // Validates form and sends booking request to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -233,6 +244,7 @@ export default function Book() {
     }
   };
 
+  // UI: renders booking form and handles user interaction
   return (
     <div style={styles.page}>
       {message && <div style={styles.toast}>{message}</div>}
