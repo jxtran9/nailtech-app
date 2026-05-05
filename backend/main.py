@@ -464,3 +464,190 @@ def complete_appointment(appointment_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(appointment)
     return appointment
+
+
+# Returns a summary of appointment counts by status and total revenue from completed appointments
+@app.get("/analytics/summary")
+def get_analytics_summary(db: Session = Depends(get_db)):
+    appointments = db.query(Appointment).all()
+
+    total_appointments = len(appointments)
+    pending_count = sum(1 for appt in appointments if appt.status == "pending")
+    approved_count = sum(1 for appt in appointments if appt.status == "approved")
+    declined_count = sum(1 for appt in appointments if appt.status == "declined")
+    cancelled_count = sum(1 for appt in appointments if appt.status == "cancelled")
+    completed_count = sum(1 for appt in appointments if appt.status == "completed")
+
+    total_revenue = sum(
+        float(appt.total_price or 0)
+        for appt in appointments
+        if appt.status == "completed"
+    )
+
+    return {
+        "total_appointments": total_appointments,
+        "pending": pending_count,
+        "approved": approved_count,
+        "declined": declined_count,
+        "cancelled": cancelled_count,
+        "completed": completed_count,
+        "completed_revenue": total_revenue,
+    }
+
+# Returns the most popular services based on completed appointments, sorted by count
+@app.get("/analytics/top-services")
+def get_top_services(db: Session = Depends(get_db)):
+    appointment_services = (
+        db.query(AppointmentService)
+        .join(Appointment)
+        .join(Service)
+        .filter(Appointment.status == "completed")
+        .all()
+    )
+
+    service_counts = {}
+
+    for row in appointment_services:
+        service_name = row.service.service_name
+
+        if service_name in service_counts:
+            service_counts[service_name] += 1
+        else:
+            service_counts[service_name] = 1
+
+    sorted_services = sorted(
+        service_counts.items(),
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    return {
+    service: count
+    for service, count in sorted_services[:5]
+    }
+
+
+# Returns the most popular service categories based on completed appointments, sorted by count
+@app.get("/analytics/service-categories")
+def get_service_categories(db: Session = Depends(get_db)):
+    appointment_services = (
+        db.query(AppointmentService)
+        .join(Appointment)
+        .join(Service)
+        .filter(Appointment.status == "completed")
+        .all()
+    )
+
+    category_counts = {}
+
+    for row in appointment_services:
+        category = row.service.category or "Uncategorized"
+
+        if category in category_counts:
+            category_counts[category] += 1
+        else:
+            category_counts[category] = 1
+
+    sorted_categories = sorted(
+        category_counts.items(),
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    return {
+        category: count
+        for category, count in sorted_categories
+    }
+
+
+# Returns the most popular workers based on completed appointments with requested worker, sorted by count
+@app.get("/analytics/busiest-days")
+def get_busiest_days(db: Session = Depends(get_db)):
+    appointments = db.query(Appointment).all()
+
+    day_counts = {
+        "Monday": 0,
+        "Tuesday": 0,
+        "Wednesday": 0,
+        "Thursday": 0,
+        "Friday": 0,
+        "Saturday": 0,
+        "Sunday": 0,
+    }
+
+    for appt in appointments:
+        if appt.status != "completed":
+            continue
+
+        day = appt.appointment_datetime.strftime("%A")
+        day_counts[day] += 1
+
+    return day_counts
+
+# Returns peak hours for appointments based on completed appointments, grouped by hour of day (0-23) and sorted by count
+@app.get("/analytics/peak-hours")
+def get_peak_hours(db: Session = Depends(get_db)):
+    appointments = db.query(Appointment).all()
+
+    hour_counts = {hour: 0 for hour in range(24)}
+
+    for appt in appointments:
+        if appt.status != "completed":
+            continue
+
+        hour = appt.appointment_datetime.hour
+        hour_counts[hour] += 1
+
+    return {
+        f"{hour}:00": count
+        for hour, count in hour_counts.items()
+    }
+
+
+# Returns recommendations based on appointment data, such as busiest days/hours and underperforming days
+@app.get("/analytics/recommendations")
+def get_recommendations(db: Session = Depends(get_db)):
+    recommendations = []
+
+    appointments = db.query(Appointment).all()
+
+    completed_appointments = [
+        appt for appt in appointments if appt.status == "completed"
+    ]
+
+    if not completed_appointments:
+        return {
+            "recommendations": [
+                "Not enough completed appointment data yet to generate recommendations."
+            ]
+        }
+
+    day_counts = {}
+    hour_counts = {}
+
+    for appt in completed_appointments:
+        day = appt.appointment_datetime.strftime("%A")
+        hour = appt.appointment_datetime.hour
+
+        day_counts[day] = day_counts.get(day, 0) + 1
+        hour_counts[hour] = hour_counts.get(hour, 0) + 1
+        slowest_day = min(day_counts, key=day_counts.get)
+
+    busiest_day = max(day_counts, key=day_counts.get)
+    busiest_hour = max(hour_counts, key=hour_counts.get)
+
+    recommendations.append(
+        f"{busiest_day} is the busiest day. Consider scheduling more staff or preparing for higher demand on this day."
+    )
+
+    recommendations.append(
+        f"{busiest_hour}:00 is the busiest hour. Consider avoiding understaffing around this time."
+    )
+
+    recommendations.append(
+        f"{slowest_day} has lower demand. Consider offering promotions or discounts to increase bookings."
+    )
+
+    return {
+        "recommendations": recommendations
+    }

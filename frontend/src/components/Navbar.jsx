@@ -8,6 +8,7 @@ export default function Navbar() {
       <Link to="/book">Book Appointment</Link>
       <Link to="/admin">Admin</Link>
       <Link to="/admin/add-booking">Add Booking</Link>
+      <Link to="/admin/analytics">Analytics</Link>
     </nav>
   );
 }
