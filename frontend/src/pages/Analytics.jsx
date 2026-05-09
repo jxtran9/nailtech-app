@@ -70,7 +70,7 @@ export default function Analytics() {
         ],
     };
 
-    // Chart data for completed appoinments grouped by hour
+    // Chart data for completed appointments grouped by hour
     const peakHoursChartData = {
         labels: Object.keys(peakHours),
         datasets: [
