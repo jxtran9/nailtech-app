@@ -1,6 +1,17 @@
+/* Global Styles and Theme Variables */
+:root {
+  --primary-pink: #e88bb5;
+  --soft-pink: #fde8f1;
+  --light-pink: #fff7fb;
+  --dark-text: #2d2d2d;
+  --muted-text: #6b7280;
+  --border-color: #f3c6d8;
+  --card-bg: #ffffff;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #fafafa;
-  color: #333;
+  background: var(--light-pink);
+  color: var(--dark-text);
 }

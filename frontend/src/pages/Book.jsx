@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "../styles/book.css";
 
 // Booking page: allows users to create appointment requests
 // Handles form input, loads services/workers, and sends data to backend
@@ -10,7 +11,7 @@ export default function Book() {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Stores all user input (name, contact, services, data/time)
+  // Stores all user input (name, contact, services, date/time)
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -39,6 +40,7 @@ export default function Book() {
     if (!acc[service.category]) {
       acc[service.category] = [];
     }
+
     acc[service.category].push(service);
     return acc;
   }, {});
@@ -113,6 +115,7 @@ export default function Book() {
   // Updates formData when user types in inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -246,12 +249,12 @@ export default function Book() {
 
   // UI: renders booking form and handles user interaction
   return (
-    <div style={styles.page}>
-      {message && <div style={styles.toast}>{message}</div>}
+    <main className="book-page">
+      {message && <div className="toast-message">{message}</div>}
 
-      <div style={styles.card}>
-        <h1 style={styles.title}>Book an Appointment</h1>
-        <p style={styles.subtitle}>
+      <section className="book-card">
+        <h1 className="book-title">Book an Appointment</h1>
+        <p className="book-subtitle">
           Enter your information, choose one or more services, and select your
           preferred time.
         </p>
@@ -259,82 +262,82 @@ export default function Book() {
         {loading ? (
           <p>Loading booking form...</p>
         ) : (
-          <form onSubmit={handleSubmit} style={styles.form}>
-            <div style={styles.twoColumn}>
-              <div style={styles.field}>
-                <label style={styles.label}>First Name</label>
+          <form onSubmit={handleSubmit} className="book-form">
+            <div className="book-two-column">
+              <div className="book-field">
+                <label className="book-label">First Name</label>
                 <input
                   type="text"
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleChange}
                   required
-                  style={styles.input}
+                  className="book-input"
                 />
               </div>
 
-              <div style={styles.field}>
-                <label style={styles.label}>Last Name</label>
+              <div className="book-field">
+                <label className="book-label">Last Name</label>
                 <input
                   type="text"
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
                   required
-                  style={styles.input}
+                  className="book-input"
                 />
               </div>
             </div>
 
-            <div style={styles.twoColumn}>
-              <div style={styles.field}>
-                <label style={styles.label}>Phone</label>
+            <div className="book-two-column">
+              <div className="book-field">
+                <label className="book-label">Phone</label>
                 <input
                   type="text"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  style={styles.input}
+                  className="book-input"
                 />
               </div>
 
-              <div style={styles.field}>
-                <label style={styles.label}>Email</label>
+              <div className="book-field">
+                <label className="book-label">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  style={styles.input}
+                  className="book-input"
                 />
               </div>
             </div>
 
-            <div style={styles.servicesSection}>
-              <div style={styles.servicesHeader}>
-                <h2 style={styles.sectionTitle}>Services</h2>
+            <div className="book-services-section">
+              <div className="book-services-header">
+                <h2 className="book-section-title">Services</h2>
                 <button
                   type="button"
                   onClick={addServiceRow}
-                  style={styles.addButton}
+                  className="book-add-button"
                 >
                   + Add Service
                 </button>
               </div>
 
               {formData.services.map((serviceRow, index) => (
-                <div key={index} style={styles.serviceRow}>
-                  <div style={styles.field}>
-                    <label style={styles.label}>Service {index + 1}</label>
+                <div key={index} className="book-service-row">
+                  <div className="book-field">
+                    <label className="book-label">Service {index + 1}</label>
                     <select
                       value={serviceRow.service_id}
                       onChange={(e) =>
                         handleServiceChange(index, "service_id", e.target.value)
                       }
                       required
-                      style={styles.input}
+                      className="book-input"
                     >
                       <option value="">Select a service</option>
 
@@ -353,8 +356,8 @@ export default function Book() {
                     </select>
                   </div>
 
-                  <div style={styles.field}>
-                    <label style={styles.label}>Requested Worker</label>
+                  <div className="book-field">
+                    <label className="book-label">Requested Worker</label>
                     <select
                       value={serviceRow.requested_worker_id}
                       onChange={(e) =>
@@ -364,9 +367,10 @@ export default function Book() {
                           e.target.value
                         )
                       }
-                      style={styles.input}
+                      className="book-input"
                     >
                       <option value="">No preference</option>
+
                       {workers.map((worker) => (
                         <option key={worker.worker_id} value={worker.worker_id}>
                           {worker.first_name} {worker.last_name}
@@ -375,11 +379,11 @@ export default function Book() {
                     </select>
                   </div>
 
-                  <div style={styles.removeButtonWrapper}>
+                  <div className="book-remove-button-wrapper">
                     <button
                       type="button"
                       onClick={() => removeServiceRow(index)}
-                      style={styles.removeButton}
+                      className="book-remove-button"
                       disabled={formData.services.length === 1}
                     >
                       Remove
@@ -388,14 +392,14 @@ export default function Book() {
                 </div>
               ))}
 
-              <div style={styles.totalBox}>
+              <div className="book-total-box">
                 <strong>Estimated Total:</strong> ${totalPrice.toFixed(2)}
               </div>
             </div>
 
-            <div style={styles.twoColumn}>
-              <div style={styles.field}>
-                <label style={styles.label}>Appointment Date</label>
+            <div className="book-two-column">
+              <div className="book-field">
+                <label className="book-label">Appointment Date</label>
                 <input
                   type="date"
                   name="appointment_date"
@@ -403,182 +407,41 @@ export default function Book() {
                   onChange={handleChange}
                   required
                   min={localToday}
-                  style={styles.input}
+                  className="book-input"
                 />
               </div>
 
-              <div style={styles.field}>
-                <label style={styles.label}>Appointment Time</label>
+              <div className="book-field">
+                <label className="book-label">Appointment Time</label>
                 <input
                   type="time"
                   name="appointment_time"
                   value={formData.appointment_time}
                   onChange={handleChange}
                   required
-                  style={styles.input}
+                  className="book-input"
                 />
               </div>
             </div>
 
-            <div style={styles.field}>
-              <label style={styles.label}>Notes</label>
+            <div className="book-field">
+              <label className="book-label">Notes</label>
               <textarea
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
                 rows="4"
-                style={styles.textarea}
+                className="book-textarea"
                 placeholder="Add any notes here..."
               />
             </div>
 
-            <button type="submit" disabled={submitting} style={styles.button}>
+            <button type="submit" disabled={submitting} className="book-button">
               {submitting ? "Submitting..." : "Book Appointment"}
             </button>
           </form>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    backgroundColor: "#f8f5f2",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "2rem",
-  },
-  card: {
-    backgroundColor: "#fff",
-    padding: "2rem",
-    borderRadius: "16px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-    width: "100%",
-    maxWidth: "850px",
-  },
-  title: {
-    marginBottom: "0.5rem",
-    fontSize: "2rem",
-    textAlign: "center",
-  },
-  subtitle: {
-    marginBottom: "1.5rem",
-    textAlign: "center",
-    color: "#666",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  },
-  twoColumn: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "1rem",
-  },
-  field: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  label: {
-    marginBottom: "0.4rem",
-    fontWeight: "600",
-  },
-  input: {
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "1rem",
-  },
-  textarea: {
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "1rem",
-    resize: "vertical",
-  },
-  button: {
-    padding: "0.9rem",
-    borderRadius: "10px",
-    border: "none",
-    backgroundColor: "#b57b5b",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  servicesSection: {
-    border: "1px solid #eee",
-    borderRadius: "12px",
-    padding: "1rem",
-    backgroundColor: "#faf8f6",
-  },
-  servicesHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "1rem",
-  },
-  sectionTitle: {
-    margin: 0,
-    fontSize: "1.2rem",
-  },
-  serviceRow: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr auto",
-    gap: "1rem",
-    alignItems: "end",
-    marginBottom: "1rem",
-    paddingBottom: "1rem",
-    borderBottom: "1px solid #e8e8e8",
-  },
-  totalBox: {
-    padding: "0.9rem",
-    borderRadius: "10px",
-    backgroundColor: "#fff",
-    border: "1px solid #e5d6cd",
-    fontWeight: "600",
-    textAlign: "right",
-    color: "#333",
-  },
-  addButton: {
-    padding: "0.6rem 0.9rem",
-    border: "none",
-    borderRadius: "8px",
-    backgroundColor: "#d1ecf1",
-    color: "#0c5460",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  removeButtonWrapper: {
-    display: "flex",
-    alignItems: "end",
-  },
-  removeButton: {
-    padding: "0.75rem 0.9rem",
-    border: "none",
-    borderRadius: "8px",
-    backgroundColor: "#f8d7da",
-    color: "#721c24",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  toast: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    backgroundColor: "#333",
-    color: "#fff",
-    padding: "1rem 1.5rem",
-    borderRadius: "12px",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
-    zIndex: 1000,
-    fontWeight: "600",
-    maxWidth: "500px",
-    textAlign: "center",
-  },
-};

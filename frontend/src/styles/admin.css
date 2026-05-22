@@ -1,0 +1,173 @@
+.admin-page {
+  min-height: 100vh;
+  background: var(--light-pink);
+  padding: 4rem 2rem;
+}
+
+.admin-card {
+  max-width: 1450px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 28px;
+  padding: 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.admin-title {
+  text-align: center;
+  font-size: 2.75rem;
+  margin: 0 0 0.75rem;
+  color: var(--dark-text);
+}
+
+.admin-subtitle {
+  text-align: center;
+  color: var(--muted-text);
+  margin: 0 0 2rem;
+}
+
+.admin-refresh-button {
+  background: var(--primary-pink);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.admin-filter-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-filter-input {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+}
+
+.admin-clear-button {
+  border: none;
+  border-radius: 12px;
+  background: #e2e3e5;
+  color: #383d41;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.admin-table-wrapper {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 2px solid #f1dbe5;
+  background: #fff1f6;
+  white-space: nowrap;
+  color: var(--dark-text);
+}
+
+.admin-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f4e3eb;
+  vertical-align: top;
+  color: var(--dark-text);
+}
+
+.status-badge {
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-declined {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status-cancelled {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.status-completed {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.admin-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.approve-button,
+.decline-button,
+.cancel-button,
+.complete-button {
+  border: none;
+  border-radius: 12px;
+  padding: 0.65rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.approve-button {
+  background: #d4edda;
+  color: #155724;
+}
+
+.decline-button {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.cancel-button {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.complete-button {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.admin-service-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.admin-service-item {
+  margin-bottom: 0.5rem;
+}
+
+.admin-worker-text {
+  font-size: 0.9rem;
+  color: var(--muted-text);
+}

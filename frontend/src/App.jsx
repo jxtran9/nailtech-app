@@ -1,9 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
 import Services from "./pages/Services";
 import Book from "./pages/Book";
 import Admin from "./pages/Admin";
 import Navbar from "./components/Navbar";
-import AdminAddBooking from "./pages/AdminAddBooking"
+import AdminAddBooking from "./pages/AdminAddBooking";
 import Analytics from "./pages/Analytics";
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
       <Navbar />
 
       <Routes>
-        <Route path="/" element={<Navigate to="/services" />} />
+        <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
         <Route path="/book" element={<Book />} />
         <Route path="/admin" element={<Admin />} />
