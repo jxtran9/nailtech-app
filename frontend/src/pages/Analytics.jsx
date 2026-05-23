@@ -11,6 +11,7 @@ import {
 import { Bar, Pie } from "react-chartjs-2";
 
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "../styles/analytics.css";
 
 // Register Chart.js components used for bar and pie charts
@@ -122,6 +123,12 @@ export default function Analytics() {
     <main className="analytics-page">
       <section className="analytics-card">
         <h1>Analytics Dashboard</h1>
+
+        <div className="admin-nav">
+          <Link to="/admin">Dashboard</Link>
+          <Link to="/admin/add-booking">Add Booking</Link>
+          <Link to="/admin/analytics">Analytics</Link>
+        </div>
 
         <h2>Summary</h2>
         {summary && (

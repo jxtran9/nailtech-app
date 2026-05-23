@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "../styles/book.css";
 
 export default function AdminAddBooking() {
@@ -243,6 +244,12 @@ export default function AdminAddBooking() {
           Create an appointment directly for walk-ins, phone calls, or
           staff-entered bookings.
         </p>
+
+        <div className="admin-nav">
+          <Link to="/admin">Dashboard</Link>
+          <Link to="/admin/add-booking">Add Booking</Link>
+          <Link to="/admin/analytics">Analytics</Link>
+        </div>
 
         {loading ? (
           <p>Loading booking form...</p>

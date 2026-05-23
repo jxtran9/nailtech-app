@@ -15,9 +15,7 @@ export default function Navbar() {
       </div>
 
       <div className="navbar-admin">
-        <Link to="/admin">Admin</Link>
-        <Link to="/admin/add-booking">Add Booking</Link>
-        <Link to="/admin/analytics">Analytics</Link>
+        <Link to="/admin">Admin Portal</Link>
       </div>
     </nav>
   );

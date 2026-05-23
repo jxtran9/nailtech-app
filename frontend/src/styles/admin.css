@@ -27,6 +27,30 @@
   margin: 0 0 2rem;
 }
 
+.admin-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.admin-nav a {
+  text-decoration: none;
+  background: #fff7fb;
+  border: 1px solid var(--border-color);
+  color: var(--primary-pink);
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.admin-nav a:hover {
+  background: var(--primary-pink);
+  color: white;
+}
+
 .admin-refresh-button {
   background: var(--primary-pink);
   color: white;

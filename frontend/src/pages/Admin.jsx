@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "../styles/admin.css";
 
 // Admin dashboard page for staff to view and manage appointment requests
@@ -213,6 +214,12 @@ export default function Admin() {
         <p className="admin-subtitle">
           Manage appointment requests and statuses.
         </p>
+
+        <div className="admin-nav">
+          <Link to="/admin">Dashboard</Link>
+          <Link to="/admin/add-booking">Add Booking</Link>
+          <Link to="/admin/analytics">Analytics</Link>
+        </div>
 
         {message && <div className="toast-message">{message}</div>}
 
