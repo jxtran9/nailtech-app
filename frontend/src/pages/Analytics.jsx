@@ -30,7 +30,9 @@ export default function Analytics() {
   const [busiestDays, setBusiestDays] = useState({});
   const [peakHours, setPeakHours] = useState({});
   const [topServices, setTopServices] = useState({});
+  const [topWorkers, setTopWorkers] = useState({});
   const [recommendations, setRecommendations] = useState([]);
+  const [repeatCustomers, setRepeatCustomers] = useState(0);
 
   // Fetch analytics data when the dashboard page first loads
   useEffect(() => {
@@ -57,11 +59,23 @@ export default function Analytics() {
     const servicesData = await servicesRes.json();
     setTopServices(servicesData);
 
+    const workersRes = await fetch(
+      "http://127.0.0.1:8000/analytics/top-workers"
+    );
+    const workersData = await workersRes.json();
+    setTopWorkers(workersData);
+
     const recRes = await fetch(
       "http://127.0.0.1:8000/analytics/recommendations"
     );
     const recData = await recRes.json();
     setRecommendations(recData.recommendations);
+
+    const repeatRes = await fetch(
+      "http://127.0.0.1:8000/analytics/repeat-customers"
+    );
+    const repeatData = await repeatRes.json();
+    setRepeatCustomers(repeatData);
   };
 
   // Chart data for completed appointments grouped by day of week
@@ -71,7 +85,7 @@ export default function Analytics() {
       {
         label: "Completed Appointments",
         data: Object.values(busiestDays),
-        backgroundColor: "#b57b5b",
+        backgroundColor: "#e88bb5",
       },
     ],
   };
@@ -83,7 +97,7 @@ export default function Analytics() {
       {
         label: "Completed Appointments",
         data: Object.values(peakHours),
-        backgroundColor: "#8aa6a3",
+        backgroundColor: "#e88bb5",
       },
     ],
   };
@@ -96,12 +110,24 @@ export default function Analytics() {
         label: "Completed Services",
         data: Object.values(topServices),
         backgroundColor: [
-          "#b57b5b",
-          "#8aa6a3",
-          "#d8b08c",
-          "#c97c7c",
-          "#9b8fb3",
+          "#e88bb5",
+          "#f4b6c2",
+          "#d8c3f0",
+          "#b8d8f8",
+          "#f7d6a3",
         ],
+      },
+    ],
+  };
+
+  // Chart data for most requested completed workers/technicians
+  const topWorkersChartData = {
+    labels: Object.keys(topWorkers),
+    datasets: [
+      {
+        label: "Completed Appointments",
+        data: Object.values(topWorkers),
+        backgroundColor: "#e88bb5",
       },
     ],
   };
@@ -139,6 +165,26 @@ export default function Analytics() {
             </section>
 
             <section className="analytics-summary-card">
+              <h3>Completed</h3>
+              <p>{summary.completed}</p>
+            </section>
+
+            <section className="analytics-summary-card">
+              <h3>Completed Revenue</h3>
+              <p>${summary.completed_revenue}</p>
+            </section>
+
+            <section className="analytics-summary-card">
+              <h3>Repeat Customers</h3>
+              <p>{repeatCustomers.repeat_customers}</p>
+            </section>
+
+            <section className="analytics-summary-card">
+              <h3>Repeat Rate</h3>
+              <p>{repeatCustomers.repeat_rate}%</p>
+            </section>
+
+            <section className="analytics-summary-card">
               <h3>Pending</h3>
               <p>{summary.pending}</p>
             </section>
@@ -149,23 +195,13 @@ export default function Analytics() {
             </section>
 
             <section className="analytics-summary-card">
-              <h3>Declined</h3>
-              <p>{summary.declined}</p>
-            </section>
-
-            <section className="analytics-summary-card">
               <h3>Cancelled</h3>
               <p>{summary.cancelled}</p>
             </section>
 
             <section className="analytics-summary-card">
-              <h3>Completed</h3>
-              <p>{summary.completed}</p>
-            </section>
-
-            <section className="analytics-summary-card">
-              <h3>Completed Revenue</h3>
-              <p>${summary.completed_revenue}</p>
+              <h3>Declined</h3>
+              <p>{summary.declined}</p>
             </section>
           </section>
         )}
@@ -188,6 +224,13 @@ export default function Analytics() {
           <h2>Top Services</h2>
           <section className="analytics-pie-box">
             <Pie data={topServicesChartData} options={pieChartOptions} />
+          </section>
+        </section>
+
+        <section className="analytics-chart-card">
+          <h2>Top Requested Workers</h2>
+          <section className="analytics-chart-box">
+            <Bar data={topWorkersChartData} options={barChartOptions} />
           </section>
         </section>
 

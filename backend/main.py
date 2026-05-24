@@ -559,6 +559,87 @@ def get_service_categories(db: Session = Depends(get_db)):
         for category, count in sorted_categories
     }
 
+# Returns the most requested workers based on completed appointments
+@app.get("/analytics/top-workers")
+def get_top_workers(db: Session = Depends(get_db)):
+    appointment_services = (
+        db.query(AppointmentService)
+        .join(Appointment)
+        .filter(Appointment.status == "completed")
+        .filter(AppointmentService.requested_worker_id != None)
+        .all()
+    )
+
+    worker_counts = {}
+
+    for row in appointment_services:
+        worker = (
+            db.query(Worker)
+            .filter(Worker.worker_id == row.requested_worker_id)
+            .first()
+        )
+
+        if not worker:
+            continue
+
+        worker_name = f"{worker.first_name} {worker.last_name}"
+
+        if worker_name in worker_counts:
+            worker_counts[worker_name] += 1
+        else:
+            worker_counts[worker_name] = 1
+
+    sorted_workers = sorted(
+        worker_counts.items(),
+        key=lambda item: item[1],
+        reverse=True,
+    )
+
+    return {
+        worker: count
+        for worker, count in sorted_workers
+    }
+
+# Returns repeat customer analytics based on completed appointments
+@app.get("/analytics/repeat-customers")
+def get_repeat_customers(db: Session = Depends(get_db)):
+    completed_appointments = (
+        db.query(Appointment)
+        .filter(Appointment.status == "completed")
+        .all()
+    )
+
+    customer_counts = {}
+
+    for appt in completed_appointments:
+        customer_counts[appt.customer_id] = (
+            customer_counts.get(appt.customer_id, 0) + 1
+        )
+
+    repeat_customers = sum(
+        1 for count in customer_counts.values() if count > 1
+    )
+
+    new_customers = sum(
+        1 for count in customer_counts.values() if count == 1
+    )
+
+    total_customers = len(customer_counts)
+
+    repeat_rate = 0
+
+    if total_customers > 0:
+        repeat_rate = round(
+            (repeat_customers / total_customers) * 100,
+            1
+        )
+
+    return {
+        "new_customers": new_customers,
+        "repeat_customers": repeat_customers,
+        "total_customers": total_customers,
+        "repeat_rate": repeat_rate,
+    }
 
 # Returns the most popular workers based on completed appointments with requested worker, sorted by count
 @app.get("/analytics/busiest-days")
