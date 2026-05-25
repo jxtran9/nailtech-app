@@ -239,7 +239,17 @@ export default function Analytics() {
         <section className="analytics-recommendation-grid">
           {recommendations.map((rec, index) => (
             <section key={index} className="analytics-recommendation-card">
-              <strong>Recommendation {index + 1}</strong>
+              <strong>
+                {
+                  [
+                    "Peak Scheduling",
+                    "Peak Apppointment Hours",
+                    "Low Demand Periods",
+                    "Popular Service Demand",
+                    "Customer Retention",
+                  ][index]
+                }
+              </strong>
               <p>{rec}</p>
             </section>
           ))}

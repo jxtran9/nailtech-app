@@ -690,11 +690,11 @@ def get_peak_hours(db: Session = Depends(get_db)):
 def get_recommendations(db: Session = Depends(get_db)):
     recommendations = []
 
-    appointments = db.query(Appointment).all()
-
-    completed_appointments = [
-        appt for appt in appointments if appt.status == "completed"
-    ]
+    completed_appointments = (
+        db.query(Appointment)
+        .filter(Appointment.status == "completed")
+        .all()
+    )
 
     if not completed_appointments:
         return {
@@ -705,6 +705,7 @@ def get_recommendations(db: Session = Depends(get_db)):
 
     day_counts = {}
     hour_counts = {}
+    customer_counts = {}
 
     for appt in completed_appointments:
         day = appt.appointment_datetime.strftime("%A")
@@ -712,22 +713,78 @@ def get_recommendations(db: Session = Depends(get_db)):
 
         day_counts[day] = day_counts.get(day, 0) + 1
         hour_counts[hour] = hour_counts.get(hour, 0) + 1
-        slowest_day = min(day_counts, key=day_counts.get)
+        customer_counts[appt.customer_id] = customer_counts.get(appt.customer_id, 0) + 1
 
     busiest_day = max(day_counts, key=day_counts.get)
+    slowest_day = min(day_counts, key=day_counts.get)
     busiest_hour = max(hour_counts, key=hour_counts.get)
 
+    total_customers = len(customer_counts)
+    repeat_customers = sum(1 for count in customer_counts.values() if count > 1)
+
+    repeat_rate = 0
+    if total_customers > 0:
+        repeat_rate = round((repeat_customers / total_customers) * 100, 1)
+
+    appointment_services = (
+        db.query(AppointmentService)
+        .join(Appointment, AppointmentService.appointment_id == Appointment.appointment_id)
+        .join(Service, AppointmentService.service_id == Service.service_id)
+        .filter(Appointment.status == "completed")
+        .all()
+    )
+
+    service_counts = {}
+    worker_counts = {}
+
+    for row in appointment_services:
+        service_name = row.service.service_name
+        service_counts[service_name] = service_counts.get(service_name, 0) + 1
+
+        if row.requested_worker_id:
+            worker = (
+                db.query(Worker)
+                .filter(Worker.worker_id == row.requested_worker_id)
+                .first()
+            )
+
+            if worker:
+                worker_name = f"{worker.first_name} {worker.last_name}"
+                worker_counts[worker_name] = worker_counts.get(worker_name, 0) + 1
+    
+    top_service = None
+    if service_counts:
+        top_service = max(service_counts, key=service_counts.get)
+
+    top_worker = None
+    if worker_counts:
+        top_worker = max(worker_counts, key=worker_counts.get)
+
     recommendations.append(
-        f"{busiest_day} is the busiest day. Consider scheduling more staff or preparing for higher demand on this day."
+        f"{busiest_day} has the highest completed appointment volume. Consider scheduling additional technicians or limiting time-off requests on this day."
     )
 
     recommendations.append(
-        f"{busiest_hour}:00 is the busiest hour. Consider avoiding understaffing around this time."
-    )
+    f"{busiest_hour}:00 is the busiest appointment hour. Consider keeping this time window in mind when reviewing pending requests, especially for longer services or requests for specific technicians."
+)
 
     recommendations.append(
-        f"{slowest_day} has lower demand. Consider offering promotions or discounts to increase bookings."
+        f"{slowest_day} has lower completed appointment volume. This day may be useful for walk-in promotions, package discounts, or flexible staff scheduling."
     )
+
+    if top_service:
+        recommendations.append(
+            f"{top_service} is currently the most completed service. Consider keeping enough supplies available and making sure enough appointment slots are open for this service."
+        )
+
+    if repeat_rate < 20:
+        recommendations.append(
+            f"The repeat customer rate is {repeat_rate}%. Consider tracking returning clients more closely and encouraging rebooking after completed appointments."
+        )
+    else:
+        recommendations.append(
+            f"The repeat customer rate is {repeat_rate}%. Returning customer activity may help indicate overall customer satisfaction and retention trends."
+        )
 
     return {
         "recommendations": recommendations
