@@ -29,50 +29,66 @@ export default function Analytics() {
   const [summary, setSummary] = useState(null);
   const [busiestDays, setBusiestDays] = useState({});
   const [peakHours, setPeakHours] = useState({});
+  const [serviceCategories, setServiceCategories] = useState({});
   const [topServices, setTopServices] = useState({});
   const [topWorkers, setTopWorkers] = useState({});
   const [recommendations, setRecommendations] = useState([]);
   const [repeatCustomers, setRepeatCustomers] = useState(0);
+  const [selectedDays, setSelectedDays] = useState("");
 
   // Fetch analytics data when the dashboard page first loads
   useEffect(() => {
     fetchAnalytics();
-  }, []);
+  }, [selectedDays]);
 
   // Retrieves analytics data from FastAPI backend endpoints
   const fetchAnalytics = async () => {
-    const summaryRes = await fetch("http://127.0.0.1:8000/analytics/summary");
+    const daysQuery = selectedDays ? `?days=${selectedDays}` : "";
+
+    const summaryRes = await fetch(
+      `http://127.0.0.1:8000/analytics/summary${daysQuery}`
+    );
     const summaryData = await summaryRes.json();
     setSummary(summaryData);
 
-    const daysRes = await fetch("http://127.0.0.1:8000/analytics/busiest-days");
+    const daysRes = await fetch(
+      `http://127.0.0.1:8000/analytics/busiest-days${daysQuery}`
+    );
     const daysData = await daysRes.json();
     setBusiestDays(daysData);
 
-    const hoursRes = await fetch("http://127.0.0.1:8000/analytics/peak-hours");
+    const hoursRes = await fetch(
+      `http://127.0.0.1:8000/analytics/peak-hours${daysQuery}`
+    );
     const hoursData = await hoursRes.json();
     setPeakHours(hoursData);
 
+    const categoriesRes = await fetch(
+      `http://127.0.0.1:8000/analytics/service-categories${daysQuery}`
+    );
+    const categoriesData = await categoriesRes.json();
+    setServiceCategories(categoriesData);
+
     const servicesRes = await fetch(
-      "http://127.0.0.1:8000/analytics/top-services"
+      `http://127.0.0.1:8000/analytics/top-services${daysQuery}`
     );
     const servicesData = await servicesRes.json();
     setTopServices(servicesData);
 
     const workersRes = await fetch(
-      "http://127.0.0.1:8000/analytics/top-workers"
+      `http://127.0.0.1:8000/analytics/top-workers${daysQuery}`
     );
     const workersData = await workersRes.json();
     setTopWorkers(workersData);
 
     const recRes = await fetch(
-      "http://127.0.0.1:8000/analytics/recommendations"
+      `http://127.0.0.1:8000/analytics/recommendations${daysQuery}`
     );
     const recData = await recRes.json();
     setRecommendations(recData.recommendations);
 
     const repeatRes = await fetch(
-      "http://127.0.0.1:8000/analytics/repeat-customers"
+      `http://127.0.0.1:8000/analytics/repeat-customers${daysQuery}`
     );
     const repeatData = await repeatRes.json();
     setRepeatCustomers(repeatData);
@@ -98,6 +114,24 @@ export default function Analytics() {
         label: "Completed Appointments",
         data: Object.values(peakHours),
         backgroundColor: "#e88bb5",
+      },
+    ],
+  };
+
+  // Chart data for most requested completed service categories
+  const serviceCategoriesChartData = {
+    labels: Object.keys(serviceCategories),
+    datasets: [
+      {
+        label: "Completed Services",
+        data: Object.values(serviceCategories),
+        backgroundColor: [
+          "#e88bb5",
+          "#f4b6c2",
+          "#d8c3f0",
+          "#b8d8f8",
+          "#f7d6a3",
+        ],
       },
     ],
   };
@@ -155,6 +189,21 @@ export default function Analytics() {
           <Link to="/admin/add-booking">Add Booking</Link>
           <Link to="/admin/analytics">Analytics</Link>
         </div>
+
+        <section className="analytics-filter">
+          <label htmlFor="days-filter">Date Range: </label>
+          <select
+            id="days-filter"
+            value={selectedDays}
+            onChange={(e) => setSelectedDays(e.target.value)}
+          >
+            <option value="">All Time</option>
+            <option value={7}>Last 7 Days</option>
+            <option value={30}>Last 30 Days</option>
+            <option value={90}>Last 90 Days</option>
+            <option value={365}>Last Year</option>
+          </select>
+        </section>
 
         <h2>Summary</h2>
         {summary && (
@@ -217,6 +266,13 @@ export default function Analytics() {
           <h2>Peak Hours</h2>
           <section className="analytics-chart-box">
             <Bar data={peakHoursChartData} options={barChartOptions} />
+          </section>
+        </section>
+
+        <section className="analytics-chart-card">
+          <h2>Service Categories</h2>
+          <section className="analytics-pie-box">
+            <Pie data={serviceCategoriesChartData} options={pieChartOptions} />
           </section>
         </section>
 

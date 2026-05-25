@@ -5,6 +5,7 @@
 from fastapi.middleware.cors import CORSMiddleware
 
 from decimal import Decimal
+from datetime import datetime, timedelta
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session, joinedload
 
@@ -36,6 +37,13 @@ app.add_middleware(
 def root():
     return {"message": "NailTech backend is running"}
 
+# Applies optional date filtering to analytics queries
+def apply_days_filter(query, days):
+    if days is not None:
+        start_date = datetime.now() - timedelta(days=days)
+        query = query.filter(Appointment.appointment_datetime >= start_date)
+
+    return query
 
 # Returns all active services for the Services page and booking form
 @app.get("/services", response_model=list[ServiceOut])
@@ -468,8 +476,11 @@ def complete_appointment(appointment_id: int, db: Session = Depends(get_db)):
 
 # Returns a summary of appointment counts by status and total revenue from completed appointments
 @app.get("/analytics/summary")
-def get_analytics_summary(db: Session = Depends(get_db)):
-    appointments = db.query(Appointment).all()
+def get_appointment_summary(days: int | None = None, db: Session = Depends(get_db)):
+    query = db.query(Appointment)
+    query = apply_days_filter(query, days)
+
+    appointments = query.all()
 
     total_appointments = len(appointments)
     pending_count = sum(1 for appt in appointments if appt.status == "pending")
@@ -496,14 +507,17 @@ def get_analytics_summary(db: Session = Depends(get_db)):
 
 # Returns the most popular services based on completed appointments, sorted by count
 @app.get("/analytics/top-services")
-def get_top_services(db: Session = Depends(get_db)):
-    appointment_services = (
+def get_top_services(days: int | None = None, db: Session = Depends(get_db)):
+    query = (
         db.query(AppointmentService)
         .join(Appointment)
         .join(Service)
         .filter(Appointment.status == "completed")
-        .all()
     )
+
+    query = apply_days_filter(query, days)
+
+    appointment_services = query.all()
 
     service_counts = {}
 
@@ -529,14 +543,17 @@ def get_top_services(db: Session = Depends(get_db)):
 
 # Returns the most popular service categories based on completed appointments, sorted by count
 @app.get("/analytics/service-categories")
-def get_service_categories(db: Session = Depends(get_db)):
-    appointment_services = (
+def get_service_categories(days: int | None = None, db: Session = Depends(get_db)):
+    query = (
         db.query(AppointmentService)
         .join(Appointment)
         .join(Service)
         .filter(Appointment.status == "completed")
-        .all()
     )
+
+    query = apply_days_filter(query, days)
+
+    appointment_services = query.all()
 
     category_counts = {}
 
@@ -561,14 +578,17 @@ def get_service_categories(db: Session = Depends(get_db)):
 
 # Returns the most requested workers based on completed appointments
 @app.get("/analytics/top-workers")
-def get_top_workers(db: Session = Depends(get_db)):
-    appointment_services = (
+def get_top_workers(days: int | None = None, db: Session = Depends(get_db)):
+    query = (
         db.query(AppointmentService)
         .join(Appointment)
         .filter(Appointment.status == "completed")
         .filter(AppointmentService.requested_worker_id != None)
-        .all()
     )
+
+    query = apply_days_filter(query, days)
+
+    appointment_services = query.all()
 
     worker_counts = {}
 
@@ -602,12 +622,15 @@ def get_top_workers(db: Session = Depends(get_db)):
 
 # Returns repeat customer analytics based on completed appointments
 @app.get("/analytics/repeat-customers")
-def get_repeat_customers(db: Session = Depends(get_db)):
-    completed_appointments = (
+def get_repeat_customers(days: int | None = None, db: Session = Depends(get_db)):
+    query = (
         db.query(Appointment)
         .filter(Appointment.status == "completed")
-        .all()
     )
+
+    query = apply_days_filter(query, days)
+
+    completed_appointments = query.all()
 
     customer_counts = {}
 
@@ -643,8 +666,11 @@ def get_repeat_customers(db: Session = Depends(get_db)):
 
 # Returns the most popular workers based on completed appointments with requested worker, sorted by count
 @app.get("/analytics/busiest-days")
-def get_busiest_days(db: Session = Depends(get_db)):
-    appointments = db.query(Appointment).all()
+def get_busiest_days(days: int | None = None, db: Session = Depends(get_db)):
+    query = db.query(Appointment)
+    query = apply_days_filter(query, days)
+
+    appointments = query.all()
 
     day_counts = {
         "Monday": 0,
@@ -667,8 +693,11 @@ def get_busiest_days(db: Session = Depends(get_db)):
 
 # Returns peak hours for appointments based on completed appointments, grouped by hour of day (0-23) and sorted by count
 @app.get("/analytics/peak-hours")
-def get_peak_hours(db: Session = Depends(get_db)):
-    appointments = db.query(Appointment).all()
+def get_peak_hours(days: int | None = None, db: Session = Depends(get_db)):
+    query = db.query(Appointment)
+    query = apply_days_filter(query, days)
+
+    appointments = query.all()
 
     hour_counts = {hour: 0 for hour in range(24)}
 
@@ -687,14 +716,17 @@ def get_peak_hours(db: Session = Depends(get_db)):
 
 # Returns recommendations based on appointment data, such as busiest days/hours and underperforming days
 @app.get("/analytics/recommendations")
-def get_recommendations(db: Session = Depends(get_db)):
+def get_recommendations(days: int | None = None, db: Session = Depends(get_db)):
     recommendations = []
 
-    completed_appointments = (
+    query = (
         db.query(Appointment)
         .filter(Appointment.status == "completed")
-        .all()
     )
+
+    query = apply_days_filter(query, days)
+
+    completed_appointments = query.all()
 
     if not completed_appointments:
         return {
@@ -731,8 +763,11 @@ def get_recommendations(db: Session = Depends(get_db)):
         .join(Appointment, AppointmentService.appointment_id == Appointment.appointment_id)
         .join(Service, AppointmentService.service_id == Service.service_id)
         .filter(Appointment.status == "completed")
-        .all()
     )
+
+    appointment_services_query = apply_days_filter(appointment_services, days)
+
+    appointment_services = appointment_services_query.all()
 
     service_counts = {}
     worker_counts = {}
