@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import API_BASE from "../api";
 import "../styles/book.css";
 
 export default function AdminAddBooking() {
@@ -85,8 +86,8 @@ export default function AdminAddBooking() {
   const fetchData = async () => {
     try {
       const [servicesRes, workersRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/services"),
-        fetch("http://127.0.0.1:8000/workers"),
+        fetch(`${API_BASE}/services`),
+        fetch(`${API_BASE}/workers`),
       ]);
 
       if (!servicesRes.ok || !workersRes.ok) {
@@ -192,7 +193,7 @@ export default function AdminAddBooking() {
         })),
       };
 
-      const res = await fetch("http://127.0.0.1:8000/admin-booking", {
+      const res = await fetch(`${API_BASE}/admin-booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

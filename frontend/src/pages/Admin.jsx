@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import API_BASE from "../api";
 import "../styles/admin.css";
 
 // Admin dashboard page for staff to view and manage appointment requests
@@ -26,9 +27,9 @@ export default function Admin() {
       setLoading(true);
 
       const [appointmentsRes, customersRes, workersRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/appointments"),
-        fetch("http://127.0.0.1:8000/customers"),
-        fetch("http://127.0.0.1:8000/workers"),
+        fetch(`${API_BASE}/appointments`),
+        fetch(`${API_BASE}/customers`),
+        fetch(`${API_BASE}/workers`),
       ]);
 
       if (!appointmentsRes.ok || !customersRes.ok || !workersRes.ok) {
@@ -55,7 +56,7 @@ export default function Admin() {
       const detailResults = await Promise.all(
         sortedAppointments.map(async (appointment) => {
           const res = await fetch(
-            `http://127.0.0.1:8000/appointments/${appointment.appointment_id}`
+            `${API_BASE}/appointments/${appointment.appointment_id}`
           );
 
           if (!res.ok) {
@@ -92,7 +93,7 @@ export default function Admin() {
       setMessage("");
 
       const res = await fetch(
-        `http://127.0.0.1:8000/appointments/${appointmentId}/${action}`,
+        `${API_BASE}/appointments/${appointmentId}/${action}`,
         {
           method: "PATCH",
         }

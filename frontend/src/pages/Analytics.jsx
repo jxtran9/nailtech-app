@@ -12,6 +12,7 @@ import { Bar, Pie } from "react-chartjs-2";
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import API_BASE from "../api";
 import "../styles/analytics.css";
 
 // Register Chart.js components used for bar and pie charts
@@ -45,50 +46,48 @@ export default function Analytics() {
   const fetchAnalytics = async () => {
     const daysQuery = selectedDays ? `?days=${selectedDays}` : "";
 
-    const summaryRes = await fetch(
-      `http://127.0.0.1:8000/analytics/summary${daysQuery}`
-    );
+    const summaryRes = await fetch(`${API_BASE}/analytics/summary${daysQuery}`);
     const summaryData = await summaryRes.json();
     setSummary(summaryData);
 
     const daysRes = await fetch(
-      `http://127.0.0.1:8000/analytics/busiest-days${daysQuery}`
+      `${API_BASE}/analytics/busiest-days${daysQuery}`
     );
     const daysData = await daysRes.json();
     setBusiestDays(daysData);
 
     const hoursRes = await fetch(
-      `http://127.0.0.1:8000/analytics/peak-hours${daysQuery}`
+      `${API_BASE}/analytics/peak-hours${daysQuery}`
     );
     const hoursData = await hoursRes.json();
     setPeakHours(hoursData);
 
     const categoriesRes = await fetch(
-      `http://127.0.0.1:8000/analytics/service-categories${daysQuery}`
+      `${API_BASE}/analytics/service-categories${daysQuery}`
     );
     const categoriesData = await categoriesRes.json();
     setServiceCategories(categoriesData);
 
     const servicesRes = await fetch(
-      `http://127.0.0.1:8000/analytics/top-services${daysQuery}`
+      `${API_BASE}/analytics/top-services${daysQuery}`
     );
     const servicesData = await servicesRes.json();
     setTopServices(servicesData);
 
     const workersRes = await fetch(
-      `http://127.0.0.1:8000/analytics/top-workers${daysQuery}`
+      `${API_BASE}/analytics/top-workers${daysQuery}`
     );
     const workersData = await workersRes.json();
     setTopWorkers(workersData);
 
     const recRes = await fetch(
-      `http://127.0.0.1:8000/analytics/recommendations${daysQuery}`
+      `${API_BASE}/analytics/recommendations${daysQuery}`
     );
     const recData = await recRes.json();
     setRecommendations(recData.recommendations);
 
     const repeatRes = await fetch(
-      `http://127.0.0.1:8000/analytics/repeat-customers${daysQuery}`
+      `${API_BASE}/analytics/repeat-customers${daysQuery}`
     );
     const repeatData = await repeatRes.json();
     setRepeatCustomers(repeatData);

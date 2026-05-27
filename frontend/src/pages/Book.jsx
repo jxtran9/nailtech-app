@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_BASE from "../api";
 import "../styles/book.css";
 
 // Booking page: allows users to create appointment requests
@@ -91,8 +92,8 @@ export default function Book() {
   const fetchData = async () => {
     try {
       const [servicesRes, workersRes] = await Promise.all([
-        fetch("http://127.0.0.1:8000/services"),
-        fetch("http://127.0.0.1:8000/workers"),
+        fetch(`${API_BASE}/services`),
+        fetch(`${API_BASE}/workers`),
       ]);
 
       if (!servicesRes.ok || !workersRes.ok) {
@@ -204,7 +205,7 @@ export default function Book() {
         })),
       };
 
-      const res = await fetch("http://127.0.0.1:8000/booking-request", {
+      const res = await fetch(`${API_BASE}/booking-request`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

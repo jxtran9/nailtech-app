@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_BASE from "../api";
 import "../styles/services.css";
 
 const categoryOrder = [
@@ -17,7 +18,7 @@ function Services() {
   useEffect(() => {
     async function loadServices() {
       try {
-        const res = await fetch("http://127.0.0.1:8000/services");
+        const res = await fetch(`${API_BASE}/services`);
 
         if (!res.ok) {
           throw new Error(`HTTP error ${res.status}`);
