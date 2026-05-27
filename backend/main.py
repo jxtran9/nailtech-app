@@ -302,10 +302,11 @@ def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(
     db.commit()
     db.refresh(new_appointment)
 
-    send_email(
-    to_email=customer.email,
-    subject="NailTech Booking Request Received",
-    body=f"""Hi {customer.first_name},
+    try:
+        send_email(
+        to_email=customer.email,
+        subject="NailTech Booking Request Received",
+        body=f"""Hi {customer.first_name},
 
 Thank you for submitting your booking request.
 
@@ -320,7 +321,9 @@ Your request is currently pending approval. We will contact you once it has been
 Thank you,
 NailTech
 """
-)
+        )
+    except Exception as e:
+        print(f"Email failed: {e}")
 
     return new_appointment
 
@@ -427,10 +430,11 @@ def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(ge
     db.commit()
     db.refresh(new_appointment)
 
-    send_email(
-        to_email=customer.email,
-        subject="NailTech Appointment Scheduled",
-        body=f"""Hi {customer.first_name},
+    try:
+        send_email(
+            to_email=customer.email,
+            subject="NailTech Appointment Scheduled",
+            body=f"""Hi {customer.first_name},
 
 Your appointment has been scheduled.
 
@@ -445,7 +449,9 @@ We look forward to seeing you.
 Thank you,
 NailTech
 """
-)
+        )
+    except Exception as e:
+        print(f"Email failed: {e}")
 
     return new_appointment
 
@@ -475,10 +481,11 @@ def approve_appointment(appointment_id: int, db: Session = Depends(get_db)):
 
     services_text = "\n".join(f"- {name}" for name in service_names)
 
-    send_email(
-        to_email=appointment.customer.email,
-        subject="NailTech Appointment Approved",
-        body=f"""Hi {appointment.customer.first_name},
+    try:
+        send_email(
+            to_email=appointment.customer.email,
+            subject="NailTech Appointment Approved",
+            body=f"""Hi {appointment.customer.first_name},
 
 Your appointment has been approved.
 
@@ -493,7 +500,9 @@ We look forward to seeing you.
 Thank you,
 NailTech
 """
-)
+        )
+    except Exception as e:
+        print(f"Email failed: {e}")
 
     return appointment
 
@@ -514,22 +523,25 @@ def decline_appointment(appointment_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(appointment)
 
-    send_email(
-        to_email=appointment.customer.email,
-        subject="NailTech Appointment Request Declined",
-        body=f"""Hi {appointment.customer.first_name},
+    try:
+        send_email(
+            to_email=appointment.customer.email,
+            subject="NailTech Appointment Request Declined",
+            body=f"""Hi {appointment.customer.first_name},
 
-    Unfortunately, your appointment request could not be approved.
+Unfortunately, your appointment request could not be approved.
 
-    Requested Date/Time:
-    {appointment.appointment_datetime}
+Requested Date/Time:
+{appointment.appointment_datetime}
 
-    Please submit a new booking request for another available time.
+Please submit a new booking request for another available time.
 
-    Thank you,
-    NailTech
-    """
-    )
+Thank you,
+NailTech
+"""
+        )
+    except Exception as e:
+        print(f"Email failed: {e}")
 
     return appointment
 
@@ -550,22 +562,25 @@ def cancel_appointment(appointment_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(appointment)
 
-    send_email(
-        to_email=appointment.customer.email,
-        subject="NailTech Appointment Cancelled",
-        body=f"""Hi {appointment.customer.first_name},
+    try:
+        send_email(
+            to_email=appointment.customer.email,
+            subject="NailTech Appointment Cancelled",
+            body=f"""Hi {appointment.customer.first_name},
 
-    Your appointment has been cancelled.
+Your appointment has been cancelled.
 
-    Requested Date/Time:
-    {appointment.appointment_datetime}
+Requested Date/Time:
+{appointment.appointment_datetime}
 
-    If needed, please submit a new booking request for another available time.
+If needed, please submit a new booking request for another available time.
 
-    Thank you,
-    NailTech
-    """
-    )
+Thank you,
+NailTech
+"""
+)
+    except Exception as e:
+        print(f"Email failed: {e}")
 
     return appointment
 
