@@ -297,6 +297,112 @@ VALUES
 (48, 8, 70, 75, 5, 5),
 (48, 35, 20, 20, NULL, 5);
 
+
+-- =========================
+-- ADDITIONAL DEMO CUSTOMERS
+-- Extends the dataset for stronger analytics demos
+-- =========================
+INSERT INTO customers (first_name, last_name, phone, email)
+VALUES
+('Tiffany', 'Nguyen', '2069991029', 'tiffany@email.com'),
+('Michelle', 'Tran', '2069991030', 'michelle@email.com'),
+('Cindy', 'Pham', '2069991031', 'cindy@email.com'),
+('Diana', 'Vo', '2069991032', 'diana@email.com'),
+('Kaitlyn', 'Reed', '2069991033', 'kaitlyn@email.com'),
+('Sarah', 'Lam', '2069991034', 'sarah@email.com'),
+('Monica', 'Chen', '2069991035', 'monica@email.com'),
+('Julie', 'Park', '2069991036', 'julie@email.com');
+
+-- =========================
+-- ADDITIONAL DEMO APPOINTMENTS
+-- Adds May and June data for analytics, repeat customers, and workflow examples
+-- =========================
+INSERT INTO appointments (customer_id, appointment_datetime, status, notes, total_price)
+VALUES
+(37, '2026-05-03 10:00:00', 'completed', 'Weekend gel manicure', 0.00),
+(38, '2026-05-03 12:00:00', 'completed', 'Pedicure before vacation', 0.00),
+(39, '2026-05-03 14:30:00', 'completed', 'Requested nail design', 0.00),
+(40, '2026-05-04 11:00:00', 'completed', 'Quick waxing service', 0.00),
+(1,  '2026-05-05 16:00:00', 'completed', 'Returning customer', 0.00),
+(6,  '2026-05-06 13:30:00', 'completed', 'Requested gel color', 0.00),
+(15, '2026-05-07 15:00:00', 'completed', 'Pedicure appointment', 0.00),
+(21, '2026-05-08 17:00:00', 'completed', 'After work appointment', 0.00),
+
+(41, '2026-05-09 09:30:00', 'completed', 'Saturday morning booking', 0.00),
+(42, '2026-05-09 11:30:00', 'completed', 'Full set with design', 0.00),
+(43, '2026-05-09 13:30:00', 'completed', 'Spa pedicure', 0.00),
+(44, '2026-05-09 15:30:00', 'completed', 'Requested Anna', 0.00),
+(24, '2026-05-10 10:00:00', 'completed', 'Returning customer', 0.00),
+(27, '2026-05-10 12:00:00', 'completed', 'Basic manicure', 0.00),
+(31, '2026-05-10 14:00:00', 'completed', 'Weekend pedicure', 0.00),
+
+(37, '2026-05-14 16:30:00', 'completed', 'Returning customer fill in', 0.00),
+(38, '2026-05-15 13:00:00', 'completed', 'Lunch appointment', 0.00),
+(8,  '2026-05-16 10:00:00', 'completed', 'Requested Jessica again', 0.00),
+(12, '2026-05-16 12:30:00', 'completed', 'Nail design add-on', 0.00),
+(18, '2026-05-17 11:00:00', 'completed', 'Sunday appointment', 0.00),
+
+(39, '2026-06-01 15:00:00', 'approved', 'Upcoming approved appointment', 0.00),
+(40, '2026-06-02 14:00:00', 'pending', 'Requested afternoon time', 0.00),
+(41, '2026-06-03 16:00:00', 'pending', 'Waiting for confirmation', 0.00),
+(42, '2026-06-06 10:30:00', 'approved', 'Weekend approved booking', 0.00),
+(43, '2026-06-06 13:00:00', 'cancelled', 'Customer schedule conflict', 0.00),
+(44, '2026-06-07 11:00:00', 'declined', 'Technician unavailable', 0.00),
+
+(1,  '2026-06-08 10:00:00', 'pending', 'Future repeat customer request', 0.00),
+(6,  '2026-06-09 15:30:00', 'approved', 'Future approved booking', 0.00),
+(24, '2026-06-12 17:00:00', 'pending', 'Requested evening slot', 0.00),
+(31, '2026-06-13 12:00:00', 'approved', 'Future weekend booking', 0.00);
+
+-- =========================
+-- ADDITIONAL APPOINTMENT SERVICES
+-- Matches appointment IDs 49-78 from the additional demo appointments above
+-- =========================
+INSERT INTO appointment_services
+(appointment_id, service_id, service_price_at_booking, service_duration_at_booking, requested_worker_id, assigned_worker_id)
+VALUES
+(49, 2, 35, 45, 2, 2),
+(50, 7, 65, 75, NULL, 5),
+(51, 24, 35, 75, NULL, 3),
+(51, 37, 10, 15, NULL, 3),
+(52, 10, 12, 15, NULL, 6),
+(52, 12, 7, 10, NULL, 6),
+(53, 2, 35, 45, 2, 2),
+(53, 37, 10, 15, NULL, 2),
+(54, 1, 25, 30, NULL, 4),
+(54, 33, 15, 15, NULL, 4),
+(55, 5, 45, 60, NULL, 7),
+(56, 6, 55, 60, NULL, 8),
+
+(57, 2, 35, 45, NULL, 2),
+(58, 26, 65, 90, NULL, 3),
+(58, 37, 10, 15, NULL, 3),
+(59, 8, 70, 75, NULL, 5),
+(60, 32, 45, 60, 6, 6),
+(61, 25, 25, 60, NULL, 4),
+(62, 1, 25, 30, NULL, 7),
+(63, 4, 35, 45, NULL, 8),
+
+(64, 29, 35, 60, 8, 8),
+(65, 4, 35, 45, NULL, 3),
+(66, 24, 35, 75, 3, 3),
+(66, 37, 10, 15, NULL, 3),
+(67, 28, 45, 75, 3, 3),
+(67, 37, 10, 15, NULL, 3),
+(68, 5, 45, 60, NULL, 5),
+
+(69, 32, 45, 60, NULL, NULL),
+(70, 4, 35, 45, NULL, NULL),
+(71, 2, 35, 45, 2, NULL),
+(72, 30, 50, 90, NULL, 6),
+(73, 9, 75, 75, NULL, NULL),
+(74, 24, 35, 75, 6, NULL),
+
+(75, 2, 35, 45, NULL, NULL),
+(76, 7, 65, 75, NULL, 5),
+(77, 6, 55, 60, NULL, NULL),
+(78, 8, 70, 75, NULL, 8);
+
 -- UPDATE TOTAL PRICE
 SET SQL_SAFE_UPDATES = 0;
 
