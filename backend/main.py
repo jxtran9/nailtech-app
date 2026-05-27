@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from decimal import Decimal
 from datetime import datetime, timedelta
+from email_utils import send_email
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session, joinedload
 
@@ -201,7 +202,7 @@ def create_appointment(payload: AppointmentCreate, db: Session = Depends(get_db)
 
 
 # Creates a customer booking request from the public booking form
-# Resuses an existing customer by email or phone, or creates a new customer
+# Reuses an existing customer by email or phone, or creates a new customer
 # Creates a new appointment with "pending" status
 @app.post("/booking-request", response_model=AppointmentOut)
 def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(get_db)):
@@ -235,6 +236,7 @@ def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(
     seen_service_ids = set()
     total_price = Decimal("0.00")
     appointment_service_rows = []
+    service_names = []
 
     for item in payload.services:
         if item.service_id in seen_service_ids:
@@ -251,6 +253,8 @@ def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(
         )
         if not service:
             raise HTTPException(status_code=404, detail=f"Service {item.service_id} not found")
+        
+        service_names.append(service.service_name)
 
         if item.requested_worker_id is not None:
             worker = (
@@ -278,6 +282,7 @@ def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(
                 assigned_worker_id=None,
             )
         )
+    services_text = "\n".join(f"- {name}" for name in service_names)
 
     new_appointment = Appointment(
         customer_id=customer.customer_id,
@@ -296,6 +301,26 @@ def create_booking_request(payload: BookingRequestCreate, db: Session = Depends(
 
     db.commit()
     db.refresh(new_appointment)
+
+    send_email(
+    to_email=customer.email,
+    subject="NailTech Booking Request Received",
+    body=f"""Hi {customer.first_name},
+
+Thank you for submitting your booking request.
+
+Appointment Date/Time:
+{new_appointment.appointment_datetime}
+
+Services:
+{services_text}
+
+Your request is currently pending approval. We will contact you once it has been reviewed.
+
+Thank you,
+NailTech
+"""
+)
 
     return new_appointment
 
@@ -333,6 +358,7 @@ def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(ge
     seen_service_ids = set()
     total_price = Decimal("0.00")
     appointment_service_rows = []
+    service_names = []
 
     for item in payload.services:
         if item.service_id in seen_service_ids:
@@ -352,6 +378,8 @@ def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(ge
                 status_code=404,
                 detail=f"Service {item.service_id} not found"
             )
+        
+        service_names.append(service.service_name)
 
         if item.requested_worker_id is not None:
             worker = (
@@ -379,6 +407,7 @@ def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(ge
                 assigned_worker_id=item.requested_worker_id,
             )
         )
+    services_text = "\n".join(f"- {name}" for name in service_names)
 
     new_appointment = Appointment(
         customer_id=customer.customer_id,
@@ -398,6 +427,26 @@ def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(ge
     db.commit()
     db.refresh(new_appointment)
 
+    send_email(
+        to_email=customer.email,
+        subject="NailTech Appointment Scheduled",
+        body=f"""Hi {customer.first_name},
+
+Your appointment has been scheduled.
+
+Appointment Date/Time:
+{new_appointment.appointment_datetime}
+
+Services:
+{services_text}
+
+We look forward to seeing you.
+
+Thank you,
+NailTech
+"""
+)
+
     return new_appointment
 
 # Updates an appointment status to approved
@@ -405,6 +454,10 @@ def create_admin_booking(payload: BookingRequestCreate, db: Session = Depends(ge
 def approve_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (
         db.query(Appointment)
+        .options(
+            joinedload(Appointment.customer),
+            joinedload(Appointment.appointment_services).joinedload(AppointmentService.service),
+        )
         .filter(Appointment.appointment_id == appointment_id)
         .first()
     )
@@ -414,6 +467,34 @@ def approve_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment.status = "approved"
     db.commit()
     db.refresh(appointment)
+
+    service_names = []
+
+    for row in appointment.appointment_services:
+        service_names.append(row.service.service_name)
+
+    services_text = "\n".join(f"- {name}" for name in service_names)
+
+    send_email(
+        to_email=appointment.customer.email,
+        subject="NailTech Appointment Approved",
+        body=f"""Hi {appointment.customer.first_name},
+
+Your appointment has been approved.
+
+Appointment Date/Time:
+{appointment.appointment_datetime}
+
+Services:
+{services_text}
+
+We look forward to seeing you.
+
+Thank you,
+NailTech
+"""
+)
+
     return appointment
 
 
@@ -422,6 +503,7 @@ def approve_appointment(appointment_id: int, db: Session = Depends(get_db)):
 def decline_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (
         db.query(Appointment)
+        .options(joinedload(Appointment.customer))
         .filter(Appointment.appointment_id == appointment_id)
         .first()
     )
@@ -431,6 +513,24 @@ def decline_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment.status = "declined"
     db.commit()
     db.refresh(appointment)
+
+    send_email(
+        to_email=appointment.customer.email,
+        subject="NailTech Appointment Request Declined",
+        body=f"""Hi {appointment.customer.first_name},
+
+    Unfortunately, your appointment request could not be approved.
+
+    Requested Date/Time:
+    {appointment.appointment_datetime}
+
+    Please submit a new booking request for another available time.
+
+    Thank you,
+    NailTech
+    """
+    )
+
     return appointment
 
 
@@ -439,6 +539,7 @@ def decline_appointment(appointment_id: int, db: Session = Depends(get_db)):
 def cancel_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment = (
         db.query(Appointment)
+        .options(joinedload(Appointment.customer))
         .filter(Appointment.appointment_id == appointment_id)
         .first()
     )
@@ -448,6 +549,24 @@ def cancel_appointment(appointment_id: int, db: Session = Depends(get_db)):
     appointment.status = "cancelled"
     db.commit()
     db.refresh(appointment)
+
+    send_email(
+        to_email=appointment.customer.email,
+        subject="NailTech Appointment Cancelled",
+        body=f"""Hi {appointment.customer.first_name},
+
+    Your appointment has been cancelled.
+
+    Requested Date/Time:
+    {appointment.appointment_datetime}
+
+    If needed, please submit a new booking request for another available time.
+
+    Thank you,
+    NailTech
+    """
+    )
+
     return appointment
 
 

@@ -74,7 +74,6 @@ function Services() {
       <section className="services-header">
         <h1>Our Services</h1>
         <p>Browse our available nail and beauty services.</p>
-        <span>Total services: {services.length}</span>
       </section>
 
       {error && <p className="error-message">Error: {error}</p>}

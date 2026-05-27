@@ -1,19 +1,13 @@
-# =========================
 # Frontend (Vite / React)
-# =========================
 frontend/node_modules/
 frontend/dist/
 frontend/dist-ssr/
 
-# =========================
 # Backend (Python / FastAPI)
-# =========================
 backend/__pycache__/
 *.pyc
 
-# =========================
 # Logs
-# =========================
 logs
 *.log
 npm-debug.log*
@@ -22,23 +16,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# =========================
 # Environment variables
-# =========================
 .env
 *.local
 
-# =========================
 # Editor / OS files
-# =========================
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
 
-# =========================
 # Misc
-# =========================
 *.suo
 *.ntvs*
 *.njsproj
