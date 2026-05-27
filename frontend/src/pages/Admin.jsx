@@ -55,27 +55,36 @@ export default function Admin() {
 
       const detailResults = await Promise.all(
         sortedAppointments.map(async (appointment) => {
-          const res = await fetch(
-            `${API_BASE}/appointments/${appointment.appointment_id}`
-          );
-
-          if (!res.ok) {
-            throw new Error(
-              `Failed to fetch details for appointment ${appointment.appointment_id}`
+          try {
+            const res = await fetch(
+              `${API_BASE}/appointments/${appointment.appointment_id}`
             );
+
+            if (!res.ok) {
+              console.error(
+                `Failed to fetch details for appointment ${appointment.appointment_id}`
+              );
+              return null;
+            }
+
+            const detail = await res.json();
+
+            return {
+              appointment_id: appointment.appointment_id,
+              detail,
+            };
+          } catch (error) {
+            console.error(
+              `Error fetching details for appointment ${appointment.appointment_id}:`,
+              error
+            );
+            return null;
           }
-
-          const detail = await res.json();
-
-          return {
-            appointment_id: appointment.appointment_id,
-            detail,
-          };
         })
       );
 
       const detailsMap = {};
-      detailResults.forEach((item) => {
+      detailResults.filter(Boolean).forEach((item) => {
         detailsMap[item.appointment_id] = item.detail;
       });
 
