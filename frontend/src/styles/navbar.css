@@ -33,3 +33,17 @@
 .navbar-admin a:hover {
   color: var(--primary-pink);
 }
+
+.navbar-logout {
+  border: none;
+  background: transparent;
+  color: var(--dark-text);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.navbar-logout:hover {
+  color: var(--primary-pink);
+}
