@@ -115,63 +115,63 @@ VALUES
 -- Future = approved / pending / cancelled / declined
 INSERT INTO appointments (customer_id, appointment_datetime, status, notes, total_price)
 VALUES
-(1, '2026-03-30 10:00:00', 'completed', 'Requested Amy', 0.00),
-(2, '2026-03-31 13:00:00', 'completed', 'Lunch break appointment', 0.00),
-(3, '2026-04-01 11:30:00', 'completed', 'First visit', 0.00),
-(4, '2026-04-02 15:00:00', 'completed', 'Prefers quiet service', 0.00),
-(5, '2026-04-03 16:30:00', 'completed', 'After work', 0.00),
+(1, '2026-03-30 10:00:00', 'completed', NULL, 0.00),
+(2, '2026-03-31 13:00:00', 'completed', NULL, 0.00),
+(3, '2026-04-01 11:30:00', 'completed', NULL, 0.00),
+(4, '2026-04-02 15:00:00', 'completed', 'Natural look for work.', 0.00),
+(5, '2026-04-03 16:30:00', 'completed', NULL, 0.00),
 
-(6, '2026-04-04 09:30:00', 'completed', 'Birthday weekend', 0.00),
-(7, '2026-04-04 11:00:00', 'completed', 'Walk-in', 0.00),
-(8, '2026-04-04 13:00:00', 'completed', 'Requested Jessica', 0.00),
-(9, '2026-04-04 15:00:00', 'completed', 'Mother-daughter day', 0.00),
-(10, '2026-04-05 10:00:00', 'completed', 'Sunday self-care', 0.00),
-(11, '2026-04-05 12:00:00', 'completed', 'Requested Tina', 0.00),
-(12, '2026-04-05 14:30:00', 'completed', 'Added design at check-in', 0.00),
+(6, '2026-04-04 09:30:00', 'completed', 'Birthday trip this weekend.', 0.00),
+(7, '2026-04-04 11:00:00', 'completed', NULL, 0.00),
+(8, '2026-04-04 13:00:00', 'completed', 'Almond shape if possible.', 0.00),
+(9, '2026-04-04 15:00:00', 'completed', 'Can I sit next to my sister?', 0.00),
+(10, '2026-04-05 10:00:00', 'completed', NULL, 0.00),
+(11, '2026-04-05 12:00:00', 'completed', NULL, 0.00),
+(12, '2026-04-05 14:30:00', 'completed', 'Would love a simple design.', 0.00),
 
-(13, '2026-04-06 10:30:00', 'completed', 'Quick service', 0.00),
-(14, '2026-04-07 17:00:00', 'completed', 'After class', 0.00),
-(15, '2026-04-08 13:30:00', 'completed', 'Returning customer', 0.00),
-(16, '2026-04-09 11:00:00', 'completed', 'Short appointment', 0.00),
-(17, '2026-04-10 16:00:00', 'completed', 'Requested Kelly', 0.00),
+(13, '2026-04-06 10:30:00', 'completed', NULL, 0.00),
+(14, '2026-04-07 17:00:00', 'completed', 'I may be a few minutes late.', 0.00),
+(15, '2026-04-08 13:30:00', 'completed', NULL, 0.00),
+(16, '2026-04-09 11:00:00', 'completed', 'Please keep them short.', 0.00),
+(17, '2026-04-10 16:00:00', 'completed', NULL, 0.00),
 
-(18, '2026-04-11 09:00:00', 'completed', 'Vacation prep', 0.00),
-(19, '2026-04-11 10:30:00', 'completed', 'Requested Mia', 0.00),
-(20, '2026-04-11 12:30:00', 'completed', 'Walk-in', 0.00),
-(21, '2026-04-11 14:30:00', 'completed', 'Bridal shower weekend', 0.00),
-(22, '2026-04-11 16:30:00', 'completed', 'Pedicure only', 0.00),
-(23, '2026-04-12 10:00:00', 'completed', 'Sunday booking', 0.00),
-(24, '2026-04-12 12:00:00', 'completed', 'Returning customer', 0.00),
-(25, '2026-04-12 14:00:00', 'completed', 'Requested Anna', 0.00),
+(18, '2026-04-11 09:00:00', 'completed', NULL, 0.00),
+(19, '2026-04-11 10:30:00', 'completed', NULL, 0.00),
+(20, '2026-04-11 12:30:00', 'completed', NULL, 0.00),
+(21, '2026-04-11 14:30:00', 'completed', 'Soft pink if possible.', 0.00),
+(22, '2026-04-11 16:30:00', 'completed', NULL, 0.00),
+(23, '2026-04-12 10:00:00', 'completed', NULL, 0.00),
+(24, '2026-04-12 12:00:00', 'completed', NULL, 0.00),
+(25, '2026-04-12 14:00:00', 'completed', NULL, 0.00),
 
-(26, '2026-04-13 15:30:00', 'completed', 'After work', 0.00),
-(27, '2026-04-14 10:00:00', 'completed', 'Basic service', 0.00),
-(28, '2026-04-15 13:00:00', 'completed', 'Requested Linh', 0.00),
-(29, '2026-04-16 16:00:00', 'completed', 'Birthday set', 0.00),
-(30, '2026-04-17 17:30:00', 'completed', 'Late appointment', 0.00),
+(26, '2026-04-13 15:30:00', 'completed', NULL, 0.00),
+(27, '2026-04-14 10:00:00', 'completed', NULL, 0.00),
+(28, '2026-04-15 13:00:00', 'completed', NULL, 0.00),
+(29, '2026-04-16 16:00:00', 'completed', 'Something simple for graduation.', 0.00),
+(30, '2026-04-17 17:30:00', 'completed', NULL, 0.00),
 
-(31, '2026-04-18 09:30:00', 'completed', 'Weekend rush', 0.00),
-(32, '2026-04-18 11:00:00', 'completed', 'Walk-in', 0.00),
-(33, '2026-04-18 13:00:00', 'completed', 'Requested Linda', 0.00),
-(34, '2026-04-18 15:00:00', 'completed', 'Spa pedicure', 0.00),
-(35, '2026-04-19 10:00:00', 'completed', 'Sunday rush', 0.00),
-(36, '2026-04-19 12:00:00', 'completed', 'Requested Amy', 0.00),
+(31, '2026-04-18 09:30:00', 'completed', NULL, 0.00),
+(32, '2026-04-18 11:00:00', 'completed', NULL, 0.00),
+(33, '2026-04-18 13:00:00', 'completed', 'Please keep the shape natural.', 0.00),
+(34, '2026-04-18 15:00:00', 'completed', NULL, 0.00),
+(35, '2026-04-19 10:00:00', 'completed', NULL, 0.00),
+(36, '2026-04-19 12:00:00', 'completed', NULL, 0.00),
 
-(5, '2026-04-22 16:00:00', 'approved', 'Returning customer', 0.00),
-(12, '2026-04-23 11:30:00', 'pending', 'Prefers midday', 0.00),
-(8, '2026-04-24 15:30:00', 'approved', 'Requested Jessica', 0.00),
+(5, '2026-04-22 16:00:00', 'approved', NULL, 0.00),
+(12, '2026-04-23 11:30:00', 'pending', NULL, 0.00),
+(8, '2026-04-24 15:30:00', 'approved', 'I would like almond shape if possible.', 0.00),
 
-(18, '2026-04-25 09:30:00', 'approved', 'Weekend booking', 0.00),
-(2, '2026-04-25 11:00:00', 'approved', 'Requested Amy', 0.00),
-(27, '2026-04-25 13:00:00', 'pending', 'May add nail design', 0.00),
-(31, '2026-04-25 15:00:00', 'cancelled', 'Client cancelled same day', 0.00),
+(18, '2026-04-25 09:30:00', 'approved', NULL, 0.00),
+(2, '2026-04-25 11:00:00', 'approved', NULL, 0.00),
+(27, '2026-04-25 13:00:00', 'pending', 'Simple design if there is time.', 0.00),
+(31, '2026-04-25 15:00:00', 'cancelled', NULL, 0.00),
 
-(9, '2026-04-26 10:00:00', 'approved', 'Sunday booking', 0.00),
-(14, '2026-04-26 12:00:00', 'approved', 'Pedicure with gel color', 0.00),
-(22, '2026-04-26 14:30:00', 'declined', 'Requested time unavailable', 0.00),
+(9, '2026-04-26 10:00:00', 'approved', NULL, 0.00),
+(14, '2026-04-26 12:00:00', 'approved', 'Looking for a soft pink color.', 0.00),
+(22, '2026-04-26 14:30:00', 'declined', NULL, 0.00),
 
-(1, '2026-04-28 17:00:00', 'pending', 'After work', 0.00),
-(24, '2026-05-02 10:00:00', 'approved', 'Graduation weekend prep', 0.00);
+(1, '2026-04-28 17:00:00', 'pending', NULL, 0.00),
+(24, '2026-05-02 10:00:00', 'approved', NULL, 0.00);
 
 -- APPOINTMENT SERVICES
 -- requested_worker_id and assigned_worker_id use worker IDs 1-8
@@ -319,40 +319,40 @@ VALUES
 -- =========================
 INSERT INTO appointments (customer_id, appointment_datetime, status, notes, total_price)
 VALUES
-(37, '2026-05-03 10:00:00', 'completed', 'Weekend gel manicure', 0.00),
-(38, '2026-05-03 12:00:00', 'completed', 'Pedicure before vacation', 0.00),
-(39, '2026-05-03 14:30:00', 'completed', 'Requested nail design', 0.00),
-(40, '2026-05-04 11:00:00', 'completed', 'Quick waxing service', 0.00),
-(1,  '2026-05-05 16:00:00', 'completed', 'Returning customer', 0.00),
-(6,  '2026-05-06 13:30:00', 'completed', 'Requested gel color', 0.00),
-(15, '2026-05-07 15:00:00', 'completed', 'Pedicure appointment', 0.00),
-(21, '2026-05-08 17:00:00', 'completed', 'After work appointment', 0.00),
+(37, '2026-05-03 10:00:00', 'completed', NULL, 0.00),
+(38, '2026-05-03 12:00:00', 'completed', 'Before my vacation trip.', 0.00),
+(39, '2026-05-03 14:30:00', 'completed', 'Please add a simple design.', 0.00),
+(40, '2026-05-04 11:00:00', 'completed', NULL, 0.00),
+(1,  '2026-05-05 16:00:00', 'completed', NULL, 0.00),
+(6,  '2026-05-06 13:30:00', 'completed', NULL, 0.00),
+(15, '2026-05-07 15:00:00', 'completed', NULL, 0.00),
+(21, '2026-05-08 17:00:00', 'completed', NULL, 0.00),
 
-(41, '2026-05-09 09:30:00', 'completed', 'Saturday morning booking', 0.00),
-(42, '2026-05-09 11:30:00', 'completed', 'Full set with design', 0.00),
-(43, '2026-05-09 13:30:00', 'completed', 'Spa pedicure', 0.00),
-(44, '2026-05-09 15:30:00', 'completed', 'Requested Anna', 0.00),
-(24, '2026-05-10 10:00:00', 'completed', 'Returning customer', 0.00),
-(27, '2026-05-10 12:00:00', 'completed', 'Basic manicure', 0.00),
-(31, '2026-05-10 14:00:00', 'completed', 'Weekend pedicure', 0.00),
+(41, '2026-05-09 09:30:00', 'completed', NULL, 0.00),
+(42, '2026-05-09 11:30:00', 'completed', 'Soft pink ombre if possible.', 0.00),
+(43, '2026-05-09 13:30:00', 'completed', NULL, 0.00),
+(44, '2026-05-09 15:30:00', 'completed', NULL, 0.00),
+(24, '2026-05-10 10:00:00', 'completed', NULL, 0.00),
+(27, '2026-05-10 12:00:00', 'completed', NULL, 0.00),
+(31, '2026-05-10 14:00:00', 'completed', NULL, 0.00),
 
-(37, '2026-05-14 16:30:00', 'completed', 'Returning customer fill in', 0.00),
-(38, '2026-05-15 13:00:00', 'completed', 'Lunch appointment', 0.00),
-(8,  '2026-05-16 10:00:00', 'completed', 'Requested Jessica again', 0.00),
-(12, '2026-05-16 12:30:00', 'completed', 'Nail design add-on', 0.00),
-(18, '2026-05-17 11:00:00', 'completed', 'Sunday appointment', 0.00),
+(37, '2026-05-14 16:30:00', 'completed', NULL, 0.00),
+(38, '2026-05-15 13:00:00', 'completed', NULL, 0.00),
+(8,  '2026-05-16 10:00:00', 'completed', NULL, 0.00),
+(12, '2026-05-16 12:30:00', 'completed', 'Light pink if possible.', 0.00),
+(18, '2026-05-17 11:00:00', 'completed', NULL, 0.00),
 
-(39, '2026-06-01 15:00:00', 'approved', 'Upcoming approved appointment', 0.00),
-(40, '2026-06-02 14:00:00', 'pending', 'Requested afternoon time', 0.00),
-(41, '2026-06-03 16:00:00', 'pending', 'Waiting for confirmation', 0.00),
-(42, '2026-06-06 10:30:00', 'approved', 'Weekend approved booking', 0.00),
-(43, '2026-06-06 13:00:00', 'cancelled', 'Customer schedule conflict', 0.00),
-(44, '2026-06-07 11:00:00', 'declined', 'Technician unavailable', 0.00),
+(39, '2026-06-01 15:00:00', 'approved', NULL, 0.00),
+(40, '2026-06-02 14:00:00', 'pending', NULL, 0.00),
+(41, '2026-06-03 16:00:00', 'pending', NULL, 0.00),
+(42, '2026-06-06 10:30:00', 'approved', NULL, 0.00),
+(43, '2026-06-06 13:00:00', 'cancelled', NULL, 0.00),
+(44, '2026-06-07 11:00:00', 'declined', NULL, 0.00),
 
-(1,  '2026-06-08 10:00:00', 'pending', 'Future repeat customer request', 0.00),
-(6,  '2026-06-09 15:30:00', 'approved', 'Future approved booking', 0.00),
-(24, '2026-06-12 17:00:00', 'pending', 'Requested evening slot', 0.00),
-(31, '2026-06-13 12:00:00', 'approved', 'Future weekend booking', 0.00);
+(1,  '2026-06-08 10:00:00', 'pending', NULL, 0.00),
+(6,  '2026-06-09 15:30:00', 'approved', NULL, 0.00),
+(24, '2026-06-12 17:00:00', 'pending', NULL, 0.00),
+(31, '2026-06-13 12:00:00', 'approved', NULL, 0.00);
 
 -- =========================
 -- ADDITIONAL APPOINTMENT SERVICES
@@ -433,3 +433,29 @@ SELECT DATE(appointment_datetime) AS appt_date, COUNT(*) AS daily_bookings
 FROM appointments
 GROUP BY DATE(appointment_datetime)
 ORDER BY appt_date;
+
+-- Clean appendix view: appointments with customer, service, and worker details
+SELECT
+    a.appointment_id,
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    a.appointment_datetime,
+    a.status,
+    s.service_name,
+    aps.service_price_at_booking,
+    aps.service_duration_at_booking,
+    CONCAT(rw.first_name, ' ', rw.last_name) AS requested_worker,
+    CONCAT(aw.first_name, ' ', aw.last_name) AS assigned_worker,
+    a.total_price
+FROM appointments a
+JOIN customers c 
+    ON a.customer_id = c.customer_id
+JOIN appointment_services aps 
+    ON a.appointment_id = aps.appointment_id
+JOIN services s 
+    ON aps.service_id = s.service_id
+LEFT JOIN workers rw 
+    ON aps.requested_worker_id = rw.worker_id
+LEFT JOIN workers aw 
+    ON aps.assigned_worker_id = aw.worker_id
+ORDER BY a.appointment_datetime DESC
+LIMIT 15;
