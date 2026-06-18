@@ -5,10 +5,13 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 load_dotenv()
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "mysql+pymysql://root:ChickenNugget2_@localhost/nailtech_db"
-)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL is not set. Create backend/.env from backend/.env.example "
+        "or set DATABASE_URL in the deployment environment."
+    )
 
 engine = create_engine(
     DATABASE_URL,
